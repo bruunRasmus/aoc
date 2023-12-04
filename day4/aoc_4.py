@@ -25,28 +25,22 @@ def inputToLists(s):
     xs,ys = list(map(lambda x: removeEmptyFirst(re.split("\s\s|\s",x)),nums))
     return (xs,ys)
 
-def add1(d,i):
+def addN(d,i,n):
     if i in d:
-        d[i]+=1
+        d[i]+=n
     else:
-        d[i] = 1
+        d[i] = n
 
 def result(f):
     idx = 1 
     won = {1:1}
     for line in f:
-        add1(won,idx+1)
-        if not idx in won:
-            break
+        addN(won,idx+1,1)
         points = numberOfMatches(inputToLists(line.rstrip()))
         for i in range(1,points+1):
-            if idx + i in won:
-                won[idx+i] += won[idx]
-            else:
-                won[idx+i] = won[idx]
+            addN(won,idx+i,won[idx])
         idx += 1
     wonCount = [won[k] for k in range(1,idx)]
-    print(wonCount)
     return sum(wonCount)
 
 file = open(sys.argv[1],'r')
