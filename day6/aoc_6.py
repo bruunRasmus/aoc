@@ -16,5 +16,4 @@ def results(file):
     #    m,k = p
     #    prod *= possibleWins(int(m),int(k))
     #return prod
-print(results(sys.argv[1]))     
-            
+print(results(sys.argv[1]))   
