@@ -9,33 +9,29 @@ def handToLabel(hand):
     d[max(d, key=d.get)] += hand.count('J')
     
     match max(d.values()):
-        case 5: return 7
-        case 4: return 6
+        case 5:     return 7
+        case 4:     return 6
         case 3:
-            if sorted(d.values())[-2] == 2: return 5
-            else: return 4
+            if sorted(d.values())[-2] == 2: 
+                    return 5
+            else:   return 4
         case 2:
-            if sorted(d.values())[-2] == 2: return 3
-            else: return 2
-        case 1: return 1
+            if sorted(d.values())[-2] == 2: 
+                    return 3
+            else:   return 2
+        case 1:     return 1
    
 def sortKey(lhmlst):
     l,h,m = lhmlst
     newH = []
     for c in h:
         match c:
-            case 'A': 
-                newH.append(14)
-            case 'K': 
-                newH.append(13)
-            case 'Q': 
-                newH.append(12)
-            case 'J': 
-                newH.append(0)
-            case 'T': 
-                newH.append(10)
-            case _:
-                newH.append(int(c))
+            case 'A': newH.append(14)
+            case 'K': newH.append(13)
+            case 'Q': newH.append(12)
+            case 'J': newH.append(0)
+            case 'T': newH.append(10)
+            case _:   newH.append(int(c))
     return [l] + newH
 
 def results(file):
