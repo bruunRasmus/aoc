@@ -9,9 +9,9 @@ def rlToInt (rlstring):
 def findPathLength(start,endFun):
     ends = [s for s in  d if endFun(s)]
     i,current = (0,start)
-    while current not in ends:
+    while current not in ends:#assumes we only reach ends at the end of rl string
         for walk in rl:
-            current = d[current][walk]
+            current = d[current][walk] 
             i+=1
     return i
 
