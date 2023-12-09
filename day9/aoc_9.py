@@ -1,13 +1,15 @@
 import sys
 f = open(sys.argv[1],'r')
 
-oasis = [list(reversed([int(x) for x in line.split()])) for line in f]
+oasis1 = [[int(x) for x in line.split()] for line in f]
+oasis2 = [list(reversed(line)) for line in oasis1]
 
-s = 0
-for line in oasis:
+def next(line):
     length = len(line)
     for i in range(length):
         for j in range(length-i-1):
             line[j] = line[j+1]-line[j]
-    s += sum(line)
-print(s)   
+    return sum(line) 
+            
+print(sum(next(line) for line in oasis1))
+print(sum(next(line) for line in oasis2))
