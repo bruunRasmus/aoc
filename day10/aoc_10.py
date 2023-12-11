@@ -96,14 +96,13 @@ for i,l in enumerate(loops):
         maxIdx = i
 
 loopValue = loops[maxIdx][0]
-loopValueCoords = [l[0] for l in loopValue]
-
 s=0
 for i in range(len(land)):
     loopChars =  [l[0] for l in loopValue if (l[0][1]==i) and l[1]!='horizontal']
+    loopCharsCoords = [l[0] for l in loopValue if (l[0][1]==i)]
     inside = False
     for j,c in enumerate(land[i]):
-        if [j,i] not in loopValueCoords and inside == True:
+        if [j,i] not in loopCharsCoords and inside == True:
             s+=1
         if [j,i] in loopChars:
             inside = not inside
