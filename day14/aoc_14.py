@@ -2,13 +2,10 @@ import sys
 import time
 f = open(sys.argv[1],'r')
 
-lines = [s.rstrip() for s in f]
+rocks = [s.rstrip() for s in f]
 
 def rotate(llist):
-    l=  [list(i) for i in (zip(*llist))]
-    for lst in l:
-        lst.reverse()
-    return l
+    return [list(i)[::-1] for i in (zip(*llist))]
 
 def tilt(lst):
     current = 0
@@ -23,29 +20,23 @@ def tilt(lst):
         lst[-current:] = ['O']*current
     return lst
 
-rocks = lines
-T =  1000000000
 ss = []
 config = []
-l = len(rocks)
 
-for t in range(T):
+for t in range(1000000000):
     for i in range (4):
-        rocks = rotate(rocks)
-        rocks = [tilt(s) for s in(rocks)]
+        rocks = [tilt(s) for s in rotate(rocks)]
     s = 0
     co = []
     for i,r in enumerate(rocks):
         for j,c in enumerate(r): 
             if (c=='O'):
-                s += (l-i)
+                s += (len(rocks)-i)
                 co.append([i,j])
-    
     if co in config:
-        print("duplicate found at t= ", t, "last seen at: ", config.index(co))
-        print("so value at T= 1000000000 is SS at index: 1000000000-",t,"%",t-config.index(co), "-1 =",
+        print("duplicate found at t =", t, "last seen at: ", config.index(co))
+        print("so value at T= 1e9 is SS at index: (1e9 -",t,") % (",t-config.index(co), ") - 1 =",
                ss[(1000000000-t) % (t-config.index(co))+config.index(co)-1])
         break
     ss.append(s)
     config.append(co)
-   

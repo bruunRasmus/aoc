@@ -12,63 +12,42 @@ def valid(records,ints):
                 matching.append(current)
                 current = 0
     if current > 0:
-        matching.append(current)
+        matching.append(current)  
     return matching == ints
 
 states = {}
 
 def posConfig(k,records,ints,current, j,i):
-    key = (k,i,j)
-    
-    print(records)
-
+    key = (k,j,i,current)
+    if key in states:
+        return states[key]
     if len(records) == i:
-        #print("yes")
-        #print(int(valid(records,ints)))
-        #print(records,ints)
-        states[key] = int(valid(records,ints))
-        #print("returning with value: ",int(valid(records,ints)) )
         return int(valid(records,ints))
-    
+    s = 0
     match records[i]: 
         case '#':
-            current +=1
-            i       +=1
-            #print("hashtag")
-            return posConfig(k,records,ints,current,j,i)
+            s+= posConfig(k,records,ints,current+1,j,i+1)
         case '.':
-            if current > 0:
-                j       +=1
-                current = 0
-            i       +=1
-            #print("dot")
-            return posConfig(k,records,ints,current,j,i)
-            
+            if current > 0 and j<len(ints) and ints[j] == current:
+                s+=  posConfig(k,records,ints,0,j+1,i+1)
+            elif current == 0:
+                s += posConfig(k, records,ints,0,j,i+1)
         case '?':
-            if key in list(states.keys()):
-                #print("no way")
-                return states[key]
-            else:
-                print(states)
-                v1 = posConfig(k,records[:i]+'#'+records[i+1:],ints,current,j,i+1)
-                #print("v1",v1)
-                v2 = posConfig(k,records[:i]+'.'+records[i+1:],ints,current,j,i+1)
-                #print("v2",v2)
-                
-                states[key] = v1 + v2
-                return states[key]
-        case _:
-            print("no")
-            return 0
+            v1 = posConfig(k,records[:i]+'#'+records[i+1:],ints,current+1,j,i+1)
+            if current > 0 and j<len(ints) and ints[j] == current:
+                v2 =  posConfig(k,records[:i]+'.'+records[i+1:],ints,0,j+1,i+1)
+            elif current == 0:
+                v2 = posConfig(k, records[:i]+'.'+records[i+1:],ints,0,j,i+1)
+            else: 
+                v2 = 0
+            s+= (v1 + v2)
+    states[key] = s
+    return s
     
-
 sum = 0
 for k,line in enumerate(f):
     records,ints = line.split()
     records = ((records + '?')*5)[:-1]
     ints = [int(i) for i in ints.split(',')]*5
-    sum += posConfig(k,records, ints,0,0,0)
-    
-print(sum)
-
-    
+    sum += posConfig(k,records, ints,0,0,0)  
+print(sum)  

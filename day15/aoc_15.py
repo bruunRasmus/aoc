@@ -1,5 +1,4 @@
 import sys
-from collections import deque
 f = open(sys.argv[1],'r')
 input= [s for s in  f.readline().split("\n")[0].split(',')]
 
@@ -34,4 +33,3 @@ for i, b in enumerate(boxes):
     for j,elm in enumerate(b):
         s+= (i+1)*(j+1)*int(elm[1])
 print(s)
-
