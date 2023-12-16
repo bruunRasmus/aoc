@@ -60,28 +60,32 @@ def beam (c,r,dir):
             else:
                 vdir[c,r] = vdir[c,r].append(dd)
         except:
-            vdir[c,r] = dd
+            vdir[c,r] = [dd]
             
         cnew,rnew = newPos(c,r,dd)
         if (0<=cnew<len(mirrors[0])) and (0<=rnew<len(mirrors)):
             beam(cnew,rnew,dd)
 
+vdir = {}    
+beam(-1,0,'right')
+print("part1:", len(vdir)-1)
+
 best = 0
 for start in range(len(mirrors)):
     vdir = {}    
-    beam(0,start,'right')
+    beam(-1,start,'right')
     best = max(best,len(vdir))
     
     vdir = {} 
-    beam(0,len(mirrors)-start-1,'left')
+    beam(-1,len(mirrors)-start-1,'left')
     best = max(best,len(vdir))    
 for start in range(len(mirrors)):
     vdir = {}
-    beam(start,0,'down')
+    beam(start,-1,'down')
     best = max(best,len(vdir))
     
     vdir = {}
-    beam(len(mirrors)-1-start,0,'up')
+    beam(len(mirrors)-1-start,-1,'up')
     best = max(best,len(vdir))
 
-print(best)
+print("part2:", best-1)
