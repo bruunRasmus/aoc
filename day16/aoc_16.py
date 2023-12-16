@@ -52,7 +52,6 @@ def newDir (oldDir,mir):
 
 sys.setrecursionlimit(5000)
 def beam (c,r,dir):
-    visited[c,r] = 1
     dnew = newDir(dir,mirrors[r][c])
     for dd in dnew:
         try:
@@ -69,21 +68,20 @@ def beam (c,r,dir):
 
 best = 0
 for start in range(len(mirrors)):
-    visited,vdir = {},{}      
+    vdir = {}    
     beam(0,start,'right')
-    best = max(best,len(visited))
+    best = max(best,len(vdir))
     
-    visited,vdir = {},{}    
+    vdir = {} 
     beam(0,len(mirrors)-start-1,'left')
-    best = max(best,len(visited))
-    
+    best = max(best,len(vdir))    
 for start in range(len(mirrors)):
-    visited,vdir = {},{}     
+    vdir = {}
     beam(start,0,'down')
-    best = max(best,len(visited))
+    best = max(best,len(vdir))
     
-    visited,vdir = {},{}     
+    vdir = {}
     beam(len(mirrors)-1-start,0,'up')
-    best = max(best,len(visited))
+    best = max(best,len(vdir))
 
 print(best)
