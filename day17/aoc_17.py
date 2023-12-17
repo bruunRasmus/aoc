@@ -12,8 +12,8 @@ dist = {}
 prev = {}
 for indir in range(4):
     for l in range(10):
-        for c in range(len(heatmap[0])):
-            for r in range(len(heatmap)):
+        for c in range(C):
+            for r in range(R):
                 dist[(r,c,l,indir)] = 1e10
 
 for i in range(4):
@@ -32,7 +32,7 @@ qelm = {}
 while len(Q)>0:
     d,q = heappop(Q)
     r,c,l,d = q
-    if (([r,c] == [len(heatmap)-1,len(heatmap[0])-1])):
+    if (([r,c] == [R-1,C-1])):
         break
     for n in neighbour((c,r),d,l):
         cc,rr,dd,ll = n
