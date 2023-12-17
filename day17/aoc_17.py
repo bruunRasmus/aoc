@@ -1,65 +1,57 @@
 import sys
+from heapq import heapify, heappop,heappush
 f = open(sys.argv[1],'r')
 heatmap = f.read().strip().split('\n')
-heatmap = [[[[int(c),1e10,0,-1] for _ in range (3)] for c in l ] for l in heatmap]
-heatmap[0][0] = [[heatmap[0][0][0][0],0,0,-1] for _ in range (3)]
-print(heatmap[0][0])
+heatmap = [[int(c) for c in l ] for l in heatmap]
 
+R= len(heatmap)
+C = len(heatmap[0])
 
-def neighbour(x):
+Q = []
+dist = {}
+prev = {}
+for indir in range(4):
+    for l in range(10):
+        for c in range(len(heatmap[0])):
+            for r in range(len(heatmap)):
+                dist[(r,c,l,indir)] = 1e10
+
+for i in range(4):
+    dist[(0,0,0,i)] = 0
+    heappush(Q,(0,(0,0,0,1)))
+
+def neighbour(x,d,l):
     c,r = x
-    if c == 0:
-        if r == 0:
-            return [[c+1,r,1],[c,r+1,0]]
-        else:
-            return [[c+1,r,1],[c,r+1,0],[c,r-1,2]]
-    elif r == 0:
-        return [[c+1,r,1],[c-1,r,3],[c,r+1,0]]
-    else:
-        return [[c+1,r,1],[c-1,r,3],[c,r+1,0],[c,r-1,2]]
-def step (c,r,d,l):
-    print('c,r,d,l:',c,r,d,l)
-    mindist = 1e10
-    next = [-1,-1,-1,-1]
-    for i in range(l-1,3):
-        heatmap[r][c][i][2] = 1
-    for nc,nr,nd in neighbour([c,r]):
-        #print('nc,nr,nd:',nc,nr,nd)
-        curdist = heatmap[r][c][0][1]
-        #print("curdist = ", curdist)
-        nl = (nd==d)*(1+l)+(nd!=d)*1
-        #print('nl =',nl)
-        for i in range(nl-1,3):
-           #print('i= ',i)
-            #print(heatmap[nr][nc][i][1])
-            olddist =  heatmap[nr][nc][i][1]
-
-            w = heatmap[nr][nc][i][0]
-            print("w",w)
-            print("curdist",curdist)
-            alt = curdist+w
-
-            if alt < olddist:
-                heatmap[nr][nc][i][1] = alt
-                print("setting new dist value, at ", nr,nc,i)
-                heatmap[nr][nc][i][3] = [r,c]
-            print("visited?",heatmap[nr][nc][i][2])
-            print("newlength:", nl)
-            print("newVal:", heatmap[nr][nc][i][1])
-            if heatmap[nr][nc][i][1] < mindist and nl<3 and heatmap[nr][nc][i][2] == 0:
-                mindist = heatmap[nr][nc][i][1]
-                next = [nr,nc,nd,nl]
-    if d == 0:
-        return
-    step(*next)
+    ns =  [(c+1,r,1),(c-1,r,3),(c,r+1,0),(c,r-1,2)]
+    ns = [(cc,rr,dd,(l+1)) if d==dd else (cc,rr,dd,0) for cc,rr,dd in ns]
+    ns = [(cc,rr,dd,ll) for cc,rr,dd,ll in ns if ((d==dd) or (l >= 3))] #part2, can only turn after 3
+    ns = [(cc,rr,dd,ll) for cc,rr,dd,ll in ns if not(cc == C-1 and rr == R-1 and ll<3)] #part2, can't end on l<3
+    return ns
     
-
-step(0,0,1,1)
-  
-        
-        
-            
-                
-
-            
-            
+qelm = {}
+while len(Q)>0:
+    d,q = heappop(Q)
+    r,c,l,d = q
+    if (([r,c] == [len(heatmap)-1,len(heatmap[0])-1])):
+        break
+    for n in neighbour((c,r),d,l):
+        cc,rr,dd,ll = n
+        if 0<=cc<C and 0<=rr<R and ll < 10 and abs(dd-d)!=2: #can't turn back, ll<3 for part 1
+            alt = dist[(r,c,l,d)] + heatmap[r][c]
+            k = (rr,cc,ll,dd)
+            if  alt < dist[k]:
+                dist[(rr,cc,ll,dd)] = alt
+                prev[(rr,cc,ll,dd)] = (r,c,l,d)
+            if k not in qelm:
+                heappush(Q,(dist[k],k))
+                qelm[k] = 1
+    
+minn,I,J = 1e5, -1,-1
+for i in range(10):
+    for j in range(4):
+        if dist[(R-1,C-1,i,j)] < minn:
+            minn = (dist[(R-1,C-1,i,j)])
+            I,J = i,j
+lastheat = heatmap[R-1] [C-1]
+firstheat = heatmap[0][0]
+print(minn+lastheat-firstheat)
