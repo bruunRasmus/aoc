@@ -19,6 +19,7 @@ visited = {(r,c):[-1]*4 for r in range(R) for c in range(C)}
 endLengths = []
 #possibleChoices = deque(range(100))
 dirs = [[0,1],[1,0],[0,-1],[-1,0]]
+
 while len(Q) > 0:
     r,c,prevdir,l = Q.popleft()
     if trails[r][c] =='#':

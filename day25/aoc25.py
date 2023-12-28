@@ -1,5 +1,4 @@
 import sys
-from collections import deque
 import random
 import copy
 from math import prod
@@ -21,6 +20,7 @@ El = [list(e) for e in Es]
 #2-approx for min-cut
 def contract(E,V):
     while len(V)> 2:
+        print(len(V))
         e = random.choice(E)
         E.remove(e)
         V[e[0]] += V[e[1]]
