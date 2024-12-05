@@ -9,7 +9,7 @@ with open(sys.argv[1], 'r') as f:
             a, b = map(int, line.split('|'))
             order.setdefault(a, []).append(b)
         elif len(line) > 1:
-            updates.append(list(map(int, line.split(','))))
+            updates.append([int(x) for x in line.split(',')])
 
 def qs(lst):
     if not lst or all(elm not in order for elm in lst):
