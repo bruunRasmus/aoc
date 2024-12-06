@@ -1,11 +1,11 @@
 ﻿import sys
 with open(sys.argv[1],'r') as f:
-    input = f.read().strip().split('\n')
-    R = len(input)
-    C = len(input[0])
+    grid = f.read().strip().split('\n')
+    R = len(grid)
+    C = len(grid[0])
     for i in range(R):
         for j in range(C):
-            if input[i][j] == '^':
+            if grid[i][j] == '^':
                 pos = (j,i)
 
 def sim(pos,obs):
@@ -23,7 +23,7 @@ def sim(pos,obs):
             visited_dir[pos] = []
         
         nx,ny = [pos[0]+dir[0],pos[1]+dir[1]]
-        if 0<=nx<C and 0<=ny<R and (input[ny][nx] =='#' or (nx,ny) == obs):
+        if 0<=nx<C and 0<=ny<R and (grid[ny][nx] =='#' or (nx,ny) == obs):
             k = (k+1)%4
         else:
             pos = (nx,ny)
