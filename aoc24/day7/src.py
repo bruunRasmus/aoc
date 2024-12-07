@@ -45,7 +45,8 @@ for line in input:
     ops = ['*','+','||']
     b = len(ops)
     n = len(nums)-1
-    
+
+    #Should definitly not convert base for every i ...
     for i in range(b**(n)):  #number of possible operator combinations
         o = [ops[int(base(b,i,n)[j])] for j in range(n)] #convert index to unique operator combination
         if valid(nums,o,test):
