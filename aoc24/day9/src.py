@@ -18,15 +18,16 @@ for i in range(len(D)):
 for part2 in [False, True]:
     disk = disk_orig[:]
     n = len(disk_orig)
-    s = 0
+    s = [0 for _ in range(n//2)]
     i = n - 1
-    while i > s:
+    while i > 0:
         if disk[i] != '.':
             b = c[disk[i]] if part2 else 1
-            j = s
+            j = s[b]
             while i > j:
                 if all(disk[j + k] == '.' for k in range(b)): 
                     disk[j:j + b], disk[i - b + 1:i + 1] = disk[i - b + 1:i + 1], ['.'] * b
+                    s[b] = j
                     break
                 j += 1
         i -= 1
