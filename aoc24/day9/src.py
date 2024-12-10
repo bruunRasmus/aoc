@@ -31,7 +31,7 @@ for part2 in [False, True]:
                     break
                 j += 1
         i -= 1
-    print(sum([(i)*int(disk[i]) for i in range(n) if disk[i]!= '.']))
+    print(sum([(i)*int(disk[i]) for i in range(n) if disk[i] != '.']))
         
 
 
