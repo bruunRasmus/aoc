@@ -45,7 +45,7 @@ regions = []
 
 for r in range(R):
     for c in range(C):
-        if (r,c) not in seen and r in range(R) and c in range(C):
+        if (r,c) not in seen:
             seen.add((r,c))
             idx = len(regions)
             regions.append([4,1,[(r,c)]])
