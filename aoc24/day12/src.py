@@ -6,6 +6,7 @@ with open(sys.argv[1],'r') as f:
 
 
 nb = [(1,0),(0,1),(-1,0),(0,-1)]
+
 def grow_region(r,c,i):
     for dr,dc in nb:
         rr,cc = r+ dr, c + dc
@@ -21,48 +22,23 @@ def grow_region(r,c,i):
                 grow_region(rr,cc,i)
 
 def sides(region):
-    zr = [x[0] for x in region]
-    zc = [x[1] for x in region]
-    minR,minC,maxR,maxC = min(zr)-1,min(zc)-1,max(zr)+1,max(zc)+1
+    zr, zc = zip(*region)
+    minR, minC, maxR, maxC = min(zr) - 1, min(zc) - 1, max(zr) + 1, max(zc) + 1
     
-    s = 0
-
-    for r in range(minR,maxR):
-        b = False
-        for c in range(minC,maxC):
-            if (r,c) in region and (r-1,c) not in region:
-                s+= not b
-                b = True
-            else:
-                b = False
-
-    for r in range(minR,maxR):
-        b = False
-        for c in range(minC,maxC):
-            if (r,c) in region and (r+1,c) not in region:
-                s+= not b
-                b = True
-            else:
-                b = False
-
-    for c in range(minC,maxC):
-        b = False
-        for r in range(minR,maxR):
-            if (r,c) in region and (r,c-1) not in region:
-                s+= not b
-                b = True
-            else:
-                b = False
-    for c in range(minC,maxC):
-        b = False
-        for r in range(minR,maxR):
-            if (r,c) in region and (r,c+1) not in region:
-                s+= not b
-                b = True
-            else:
-                b = False
-    return s
-
+    def count_sides(dr, dc):
+        count = 0
+        for fixed in range(minR, maxR) if dc == 0 else range(minC, maxC):
+            b = False
+            for var in range(minC, maxC) if dc == 0 else range(minR, maxR):
+                r, c = (fixed, var) if dc == 0 else (var, fixed)
+                if (r, c) in region and (r + dr, c + dc) not in region:
+                    count += not b
+                    b = True
+                else:
+                    b = False
+        return count
+    
+    return sum([count_sides(dr,dc) for dr,dc in nb])
 
 seen = set()
 regions = []
@@ -72,7 +48,7 @@ for r in range(R):
         if (r,c) not in seen and r in range(R) and c in range(C):
             seen.add((r,c))
             idx = len(regions)
-            regions.append([4,1,[(r,c)],G[r][c]])
+            regions.append([4,1,[(r,c)]])
             grow_region(r,c,idx)
 
 s1,s2 = 0,0
