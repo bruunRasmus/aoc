@@ -1,57 +1,43 @@
 ﻿import sys
+from collections import deque
 
 with open(sys.argv[1],'r') as f:
     D = f.read().strip().split('\n')
-    bytes = []
-    for l in D:
-        x,y = l.split(',')
-        bytes.append((int(x),int(y)))
-
-def min_dist(Q):
-    min_dist,min_node = 10**8,None
-    for node in Q:
-        if dist[node]< min_dist:
-            min_dist = dist[node]
-            min_node = node
-    return min_node
-
-def reset(bytesM):
-    for r in range(R):
-        for c in range(C):
-            if (r,c) not in bytesM:
-                dist[(r,c)] = 10**8
-                prev[(r,c)] = None
-    dist[(0,0)] = 0
+    bytes = [(int(x), int(y)) for x, y in (line.split(',') for line in D)]
 
 R,C = (71,71) if (37,68) in bytes else (7,7)
 nb = [(0,1),(0,-1),(1,0),(-1,0)]
-l,h = 1024, len(bytes)
-while l<h:
-    m = (l+h)//2
+
+def bfs(m):
+    path = False
     bytesM = bytes[:m]
-    dist = {}
-    prev = {}
-    Q = [(0,0)]
-    reset(bytesM)
-    
+    Q = deque([(0,0)])
+    seen = set()
+    dist = {(0,0):0}
     while Q:
-        r,c = min_dist(Q)
-        Q.remove((r,c))
+        r,c = Q.popleft()
         if (r,c) == (R-1,C-1):
+            path = True
             break
         for dr,dc in nb:
-            rr,cc = r+dr, c + dc
-            if (rr,cc) not in bytesM and rr in range(R) and cc in range(C):
-                alt = dist[(r,c)] + 1
-                if alt < dist[(rr,cc)]:
-                    dist[(rr,cc)] = alt
-                    prev[(rr,cc)] = (r,c)
-                    Q.append((rr,cc))
-    if prev[(R-1,C-1)]:
-        print(f'path with {m} bytes')
+            rr,cc  = r+dr,c+dc
+            if (rr,cc) not in bytesM and (rr,cc) not in seen and 0<=rr<R and 0<=cc<C:
+                seen.add((rr,cc))
+                dist[(rr,cc)] = dist[(r,c)] + 1
+                Q.append((rr,cc))
+    if not path:
+        return None
+    else:
+        return dist[R-1,C-1]
+
+
+print('part1:',bfs(1024))
+
+l,h = 1024,len(bytes)
+while l<h:
+    m = (l+h)//2
+    if bfs(m):
         l = m + 1
     else:
-        print(f'no path with {m} bytes')
         h = m
-
-print('m;',bytes[m])
+print('part2:', bytes[l-1])
