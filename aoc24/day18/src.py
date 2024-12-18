@@ -5,7 +5,7 @@ with open(sys.argv[1],'r') as f:
     D = f.read().strip().split('\n')
     bytes = [(int(x), int(y)) for x, y in (line.split(',') for line in D)]
 
-R,C = (71,71) if (37,68) in bytes else (7,7)
+R,C,N = (71,71,1024) if (37,68) in bytes else (7,7,12)
 nb = [(0,1),(0,-1),(1,0),(-1,0)]
 
 def bfs(m):
@@ -31,13 +31,11 @@ def bfs(m):
         return dist[R-1,C-1]
 
 
-print('part1:',bfs(1024))
+print('part1:',bfs(N))
 
-l,h = 1024,len(bytes)
+l,h = N,len(bytes)
 while l<h:
     m = (l+h)//2
-    if bfs(m):
-        l = m + 1
-    else:
-        h = m
+    if bfs(m):  l = m + 1
+    else:       h = m
 print('part2:', bytes[l-1])
