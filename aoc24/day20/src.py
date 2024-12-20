@@ -23,19 +23,16 @@ def bfs(G):
             return d,dist
         for dr,dc in nb:
             rr,cc = r+dr,c+dc
-            if rr in range(R) and cc in range(C):
-                if (rr,cc) not in seen:
-                    if G[rr][cc] != '#':
-                        seen.add((rr,cc))
-                        dist[(rr,cc)] = d+1
-                        Q.append(((rr,cc),d+1))  
+            if rr in range(R) and cc in range(C) and (rr,cc) not in seen and G[rr][cc] != '#':
+                seen.add((rr,cc))
+                dist[(rr,cc)] = d+1
+                Q.append(((rr,cc),d+1))  
                    
 P,distP = bfs(G)
 s1,s2 = 0,0
-keys = list(distP.keys())
 
-for (ar, ac) in keys:
-    for (br, bc) in keys:
+for (ar, ac) in distP:
+    for (br, bc) in distP:
         mhDist = abs(ar - br) + abs(ac - bc)
         chDist = distP[(ar, ac)] - distP[(br, bc)]- mhDist
         if chDist >= 100:
