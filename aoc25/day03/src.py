@@ -1,5 +1,4 @@
-lines = open("input.txt",'r').read().strip()
-lines = lines.split("\n")
+lines = open("input.txt",'r').read().strip().split("\n")
 
 ans1 = ans2 = 0
 
