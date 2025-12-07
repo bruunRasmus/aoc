@@ -6,8 +6,8 @@ R,C = len(grid),len(grid[0])
 ans1 = ans2 = 0
 DP = defaultdict(int)
 
-splitter =  [(r,c) for r in range(R) for c in range(C) if  grid[r][c] == "^"]
-S =         [(r, c) for r in range(R) for c in range(C) if grid[r][c] == "S"][0]
+splitter =  [(r,c) for r in range(R) for c in range(C) if grid[r][c] == "^"]
+S =         [(r,c) for r in range(R) for c in range(C) if grid[r][c] == "S"][0]
 
 def solve(r,c):
     global ans1
