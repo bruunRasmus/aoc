@@ -41,7 +41,6 @@ for target,buttons,joltage in machines:
     X2 = [pulp.LpVariable(f"button_{i}", lowBound=0, cat=pulp.LpInteger) for i in range(len(buttons))]
     model2 = pulp.LpProblem("indicator_lights", pulp.LpMinimize)
     model2 += pulp.lpSum([X2[i] for i in range(n_buttons)])
-    
 
     for i in range(len(joltage)):
         model2 += (
