@@ -1,65 +1,33 @@
 from collections import defaultdict
-temp, pair = open("test.txt").read().strip().split("\n\n")
+temp, pair = open("input.txt").read().strip().split("\n\n")
 
-replacements = {}
+insertion = {}
 for p in pair.splitlines():
     pat,new = p.split(" -> ")
-    replacements[pat] = pat[0] + new
- 
+    c1,c2 = pat
+    insertion[(c1,c2)] = new
 
-def combine_dicts(a,b):
-    for k in a:
-        if k in b:
-            b[k]+=a[k]
+def combine_dicts(d1,d2):
+    new_d = defaultdict(int)
+    for k in d1:
+        new_d[k]+=d1[k]
+    for k in d2:
+        new_d[k]+=d2[k]
+    return new_d
+
+DP  = {}
+def solve(c1,c2,t):
+    if (c1,c2,t) not in DP:
+        if t == 0:
+            DP[(c1,c2,t)] = {c1:1}
         else:
-            b[k]=a[k]
-    return b
- 
-DP = defaultdict(dict)   
-def solve(pair,n):
-    if (pair,n) not in DP:
-        if n == 0:
-            v = defaultdict(int)
-            for p in pair:
-                v[p]+= 1
-            DP[(pair,n)] = v
-        elif pair in replacements:
-            p1 = replacements[pair]
-            p2 = p1[1]+ pair[1]
-            cd = combine_dicts(solve(p1,n-1), solve(p2,n-1))
-            cd[p1[1]] -= 1
-            DP[(pair,n)] = cd
-        else:
-            DP[(pair,n)] = solve((pair),n-1)
-    return DP[(pair,n)]
- 
-ans1 = 0
-freq = defaultdict(int)
-
-for i in range(len(temp)-1):
-    s = solve(temp[i:i+2],10)
-    print(s)
-    for c in s:
-        freq[c] += s[c]
-
-ans1 = max(freq.values()) - min(freq.values())    
-print(ans1)
-
-N = 10
-for _ in range(N):
-    new_temp = ""
+            c3 = insertion[(c1,c2)]
+            DP[(c1,c2,t)] = combine_dicts(solve(c1,c3,t-1),solve(c3,c2,t-1))
+    return DP[(c1,c2,t)]
+    
+for T in [10,40]:
+    freq = {temp[-1]:1}
     for i in range(len(temp)-1):
-        window = temp[i:i+2]
-        if window in replacements:
-            new_temp += replacements[window]
-        else:
-            new_temp += window[0]
-    new_temp += temp[-1]
-    temp = new_temp
-
-freq = defaultdict(int)
-for c in temp:
-    freq[c]+=1
-
-ans1 = max(freq.values()) - min(freq.values())    
-print(ans1)
+        c1,c2 = temp[i],temp[i+1]
+        freq = combine_dicts(freq,solve(c1,c2,T))
+    print(max(freq.values())-min(freq.values()))
