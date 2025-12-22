@@ -25,7 +25,7 @@ def solve(c1,c2,t):
             DP[(c1,c2,t)] = combine_dicts(solve(c1,c3,t-1),solve(c3,c2,t-1))
     return DP[(c1,c2,t)]
     
-for T in [10,40]:
+for T in [10,40]: 
     freq = {temp[-1]:1}
     for i in range(len(temp)-1):
         c1,c2 = temp[i],temp[i+1]
