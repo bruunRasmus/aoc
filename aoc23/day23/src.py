@@ -11,25 +11,16 @@ def find_neighbours(sr, sc):
     compressed = {}
     for dr, dc in DIRS:
         r, c = sr + dr, sc + dc
-        if (r, c) not in paths:
-            continue
-        prev = (sr, sc)
-        length = 1
+        if (r, c) not in paths: continue
+        
+        prev, length = (sr, sc), 1
         while True:
-            next_cell = None
-            degree = 0
-            for dr, dc in DIRS:
-                rr, cc = r + dr, c + dc
-                if (rr, cc) in paths and (rr, cc) != prev:
-                    degree += 1
-                    next_cell = (rr, cc)
-                    if degree > 1:
-                        break
-            if degree != 1:
+            neighbors = [(r+dr, c+dc) for dr, dc in DIRS 
+                         if (r+dr, c+dc) in paths and (r+dr, c+dc) != prev]
+            if len(neighbors) != 1:
                 compressed[(r, c)] = length
                 break
-            prev = (r, c)
-            r, c = next_cell
+            prev, (r, c) = (r, c), neighbors[0]
             length += 1
     return compressed
 
