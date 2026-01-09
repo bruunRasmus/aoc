@@ -1,97 +1,50 @@
-﻿import sys
-f = open(sys.argv[1],'r')
+﻿from collections import defaultdict
+winds = open("input.txt").read().strip().splitlines()[0]
 
-winds = [l for l in f][0]
-def vis_grid(g):
-    for y in range(g.heighest+1):
-        for x in range(7):
-            if [x,y] in g.occupied:
-                print("#",end="")
-            else:
-                print(".",end = "")
-        print()
+rocks = [[(0,0),(0,1),(0,2),(0,3)],
+         [(0,1),(1,0),(1,1),(1,2),(2,1)],
+         [(0,0),(0,1),(0,2),(1,2),(2,2)],
+         [(0,0),(1,0),(2,0),(3,0)],
+         [(0,0),(0,1),(1,0),(1,1)]]
+space = [(0,i) for i in range(7)]
+SEEN = defaultdict(list)
 
-def add(coords,vector):
-    
-    return [[c[0]+vector[0],
-             c[1]+vector[1]] for c in coords]
-
-    
-
-class grid:
-    def __init__(self):
-        self.occupied = {0:[i for i in range(7)]}
-        self.heighest = 0
-
-    def get_wind(self,i):
-        return [1,0] if winds[i%len(winds)] == ">" else [-1,0]
-    
-
-    def is_occupied(self,coords):
-        for c in coords:
-            if c[0]<0 or c[0]>6:
-                return True
-            if c[1] in self.occupied.keys():
-                if c[0] in self.occupied[c[1]]:
-                    return True
-        return False
-        
-    
-    def blow(self,rock,wind):
-        new_pos = add(rock.coords,wind)
-        rock.coords = new_pos if not self.is_occupied(new_pos) else rock.coords
-        
-    def fall(self,rock):
-        new_pos = add(rock.coords,[0,-1])
-        if self.is_occupied(new_pos):
-            rock.is_set = True
-            max_y = self.heighest
-            for c in rock.coords:
-                if c[1] in self.occupied.keys():
-                    self.occupied[c[1]].append(c[0])
-                else:
-                    self.occupied[c[1]] = [c[0]]
-                max_y = max(max_y,c[1])
-            self.heighest = max_y
+def fall(space,rock,wind_index,highest_point):
+   
+    while all(rock_pieces not in space for rock_pieces in rock):
+        wind_index = wind_index % len(winds)
+        dir = 1 if winds[wind_index] == ">" else -1
+        new_rock = [(r,c+dir) for r,c in rock]
+        for r,c in new_rock:
+            if (r,c) in space or not(0<=c<7):
+                break
         else:
-            rock.coords = new_pos
+            rock = new_rock
+        
+        wind_index += 1
+        rock = [(r-1,c) for r,c in rock]
+
+    space.extend( [(r+1,c) for r,c in rock])
     
-    def drop(self,rock,i):
-        rock.coords = add(rock.coords,[2,self.heighest+4])
-        j = 0
-        while not rock.is_set:
-            
-            self.blow(rock,self.get_wind(i+j))
-            self.fall(rock)
-            j+=1
-        return i+j
+    highest_point = max(highest_point,max([r+1 for r,c in rock]))
+    top_space = tuple([(r-highest_point + 8,c) for r,c in space if r>=highest_point-8])
 
+    return space,wind_index,highest_point,top_space
 
-class rock:
-    def __init__(self,shape_idx):
-        self.options = [[[0,0],[1,0],[2,0],[3,0]],
-                      [[0,1],[1,0],[1,1],[1,2],[2,1]],
-                      [[0,0],[1,0],[2,0],[2,1],[2,2]],
-                      [[0,0],[0,1],[0,2],[0,3]],
-                      [[0,0],[1,0],[0,1],[1,1]]]
-        self.coords = self.options[shape_idx]
-        self.is_set = False
+stopped = wind_index = highest_point = 0
 
+while stopped < 2022:
+    rock_index = stopped%len(rocks)
+    rock = rocks[rock_index]
+    rock = [(r+highest_point+4,c+2) for (r,c) in rock]
+    space,wind_index,highest_point,key = fall(space,rock,wind_index,highest_point)
 
+    if all(i in [c for r,c in key] for i in range(7)):
+        SEEN[key].append((stopped,highest_point))
+    stopped+=1
 
-
-
-N = 2022
-g = grid()
-k = 0 
-for i in range(N):
-    if i%100 == 0:
-        print(g.heighest)
-    r = rock(i%5)
-    k = g.drop(r,k)
-#print(g.heighest)
-    
-
-
-
-
+print(highest_point)
+#1520:2408, 3230:5028, 4940:7648 #cyclelength 1710 addes 2620 blocks
+# 2408 + (1000000000000-1520)//1710 * 2620) 
+# + increase in height after 3230 + (1000000000000%1710-1520) iters = 4358-2408
+print(1532163740808 + 4358-2408)
