@@ -1,5 +1,5 @@
-import sys
-f = open(sys.argv[1],'r')
+from collections import defaultdict
+f = open("input.txt")
 
 
 s = 'Sensor at x=2, y=18: closest beacon is at x=-2, y=15'
@@ -12,52 +12,42 @@ process = lambda lst: [int("".join(numChar))
 coords = [(process(line)[:2], process(line)[2:]) for line in f]
 
 
-def mDist(S,B):
-    xS,yS = S
-    xB,yB = B
-    return(abs(xS-xB) + abs(yS-yB))
 
-Y = 2000000
-noBeacon = set([])
-balls = []
+sensor_interval = defaultdict(list)
+N = 4000000
+for i,(sensor, beacon) in enumerate(coords):
+    print(f"{i}/{len(coords)}")
+    b_dist = abs(sensor[0] - beacon[0]) + abs(sensor[1]-beacon[1])
+  
+    for y in range(max(0,sensor[1]-b_dist),min(N,sensor[1]+b_dist+1)):
+        sensor_coverage =  b_dist - abs(sensor[1]-y)
+        if sensor_coverage >= 0:
+            s_lo,s_hi = sensor[0]-sensor_coverage,sensor[0] + sensor_coverage
+            overlapping = []
+            for lo,hi in sensor_interval[y]:
+                if s_lo - 1 <= hi and s_hi + 1 >= lo:
+                    s_lo,s_hi = (min(s_lo,lo),max(s_hi,hi))
+                    overlapping.append((lo,hi))
+            for i in overlapping:
+                sensor_interval[y].remove(i)
+            sensor_interval[y].append((max(s_lo,0),min(s_hi,N)))
+    
 
-def noBeaconAtY(S,B,y):
-    #global noBeacon
-    #xS,yS = S
-    global balls
-    dB = mDist(S,B)
-    #dY = mDist(S,(xS,y))
-    balls.append((S,dB))
-    #print(f'manhatten dist between {S} and {B} is {d}')
-    #for i in range(dB-dY+1):
-    #    noBeacon.add(xS-i)
-    #    noBeacon.add(xS+i)
-        #print(f'added {xS+i} and {xS-i}' )
-for c in coords:
-    S,B = c
-    #print(S,B)
-    noBeaconAtY(S,B,Y)
+print(sensor_interval)
 
-for c in coords:
-    (xS,yS),(xB,yB) = c
-    if yS == Y and xS in noBeacon:
-        noBeacon.remove(xS)
-    if yB == Y and xB in noBeacon:
-        noBeacon.remove(xB)
+y = 0
 
-V = 20
-
-def getBoundingDiamond(S,r):
-    BD = []
-    x,y = S
-    for i in range(r+2):
-        BD.append((x+r-i+1,y-i))
-        BD.append((x-(r-i+1),y-i)) 
-
-    return BD
-
-candidates =  [c for l in [getBoundingDiamond(s,r) for s,r in balls] for c in l]
-print(len(set([c for c in candidates if candidates.count(c) > 1])))
-
-#print(noBeacon)
-#print(len(noBeacon))
+while y <= N:
+    x = 0
+    while x <= N:
+        for sensor,beacon in coords:
+            b_dist = abs(sensor[0] - beacon[0]) + abs(sensor[1]-beacon[1])
+            p_dist = abs(sensor[0] - x) + abs(sensor[1]-y)
+            if p_dist<=b_dist: 
+                x =         max(sensor[0] + b_dist - abs(sensor[1]-y) + 1, x)
+                break
+        else:
+            print(x,y)
+            print(x*4000000+y)
+            break
+    y+= 1
